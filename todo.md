@@ -1,0 +1,30 @@
+- steps:
+    - datalake prepare
+        - read raw data zip file
+        - check it in note book
+        - clean it if needed
+        - convert it into parquet files and save back to GCS folder
+    - create dataware house
+        - using the parquet file, create an OLAP table with raw data, partition by year, cluster by departing station id
+            - revise how to do partioning and clustering
+                - it was in the create table statement
+                - check how run to the create table statement using pyspark ?
+            - do a transformation/query on data to answer the following:
+                - get table for stations
+                    - distinct (departure_id/name   union destination_id/name)
+                - distribution of trips by distance range per departure station
+                    - input station
+                    - query : group by (departure, distance range segment (int divide by 100m)) count per group
+                    - graph: bars 
+                        - input: select: departure station
+                        - y:axis : count, x-axis: distance-segment
+                - list of stations with, low variance, but high average, but low variance in table 2
+                    - these should be a good candidate for e-bikes, because they have long trips but many not encouraged
+                    - on table 2: group by departure: calc sum, average, variance for each , order by average desc, and variance asc, then sum desc
+                
+
+                - get data for spring/autumn months (3-9)
+                - filter by high distance > 
+                - group trips by departure station, 
+                - for each group get count, average duration, average distance, 
+- check spark code

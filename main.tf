@@ -35,3 +35,10 @@ resource "google_bigquery_dataset" "demo-dataset" {
   dataset_id = "${var.bq_dataset_name}"
   location   = var.location
 }
+
+
+# resource "google_project_service" "enable_dataproc_google_apis" {
+#   project = var.project
+#   service = "dataproc.googleapis.com"
+#   disable_dependent_services = true
+# }

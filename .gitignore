@@ -2,3 +2,7 @@
 .terraform.lock.hcl
 terraform.tfstate.backup
 terraform.tfstate
+init_shell.sh
+zoomcamp
+personal-gcp
+mage_data

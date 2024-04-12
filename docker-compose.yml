@@ -1,0 +1,22 @@
+version: '3'
+services:
+  magic:
+    image: mageai/mageai:latest
+    command: mage start zoomcamp
+    build:
+      context: .
+      dockerfile: ./mage/Dockerfile
+    environment:
+      USER_CODE_PATH: /home/src/zoomcamp
+      SPARK_MASTER_HOST: 'local'
+    ports:
+      - 6789:6789
+    volumes:
+      - .:/home/src
+      - ~/Documents/secrets/personal-gcp:/home/src/personal-gcp
+    restart: on-failure:5
+  spark:
+    image: bitnami/spark:3.3.2
+    ports:
+      - '8081:8080'
+      - '7077:7077'

@@ -1,3 +1,6 @@
+## Problem
+As a part 
+
 ## Requirements
 - gcloud cli
 - terraform
@@ -8,19 +11,20 @@
 
 - in Google-Cloud-Services console, create a new project.
 
-- login to gcs using gcloud tool
-```shell
-gcloud auth login
-```
 
-- Set the current project to the one created
+- init your shell, gcloud tool and terraform
 ```shell
-gcloud config set project <your-gcp-project-id>
-```
+# Set the project name in shell
+export GCS_PROJECT=<your-gcp-project-id>;
 
-- set the project for terraform in the current shell
-```shell
-export TF_VAR_project=<your-gcp-project-id>
+#login to gcs using gcloud tool
+gcloud auth login;
+
+#Set the current project to the one created
+gcloud config set project $GCS_PROJECT;
+
+#set the project for terraform in the current shell
+export TF_VAR_project=$GCS_PROJECT;
 ```
 
 - init terraform state file
@@ -40,7 +44,7 @@ terraform apply"
 
 - upload the dataset to bucket
 ```shell
-gcloud storage cp <data-set-zip-file-path> gs://zoomcamp_project_pfcllotsb7jsqqvbjrnw3s
+gcloud storage cp <data-set-zip-file-path> gs://zoomcamp_project_pfcllotsb7jsqqvbjrnw3s/zoomcamp-dataset
 ```
 
 - When done, take down the infrastructure.
