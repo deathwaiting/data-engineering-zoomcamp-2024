@@ -42,30 +42,30 @@ variable "gcs_storage_class" {
 variable "dataproc_master_machine_type" {
   type        = string
   description = "dataproc master node machine tyoe"
-  default     = "e2-standard-2"
+  default     = "e2-standard-4"
 }
 
 variable "dataproc_worker_machine_type" {
   type        = string
   description = "dataproc worker nodes machine type"
-  default     = "e2-standard-2"
+  default     = "e2-standard-4"
 }
 
 variable "dataproc_workers_count" {
   type        = number
   description = "count of worker nodes in cluster"
-  default     = 1
+  default     = 2
 }
 variable "dataproc_master_bootdisk" {
   type        = number
   description = "primary disk attached to master node, specified in GB"
-  default     = 30
+  default     = 100
 }
 
 variable "dataproc_worker_bootdisk" {
   type        = number
   description = "primary disk attached to master node, specified in GB"
-  default     = 20
+  default     = 100
 }
 
 variable "worker_local_ssd" {

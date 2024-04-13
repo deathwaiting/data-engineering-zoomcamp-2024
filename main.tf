@@ -55,11 +55,18 @@ resource "google_project_iam_member" "svc-access" {
   member  = "serviceAccount:${google_service_account.dataproc-svc.email}"
 }
 
+resource "google_project_iam_member" "svc-access-bigquery" {
+  project = var.project
+  role    = "roles/bigquery.dataEditor"
+  member = "serviceAccount:${google_service_account.dataproc-svc.email}"
+}
+
 resource "google_storage_bucket" "dataproc-bucket" {
   project                     = var.project
   name                        = "${var.prefix}-dataproc-config"
   uniform_bucket_level_access = true
   location                    = var.region
+  force_destroy               = true
 }
 
 resource "google_storage_bucket_iam_member" "dataproc-member" {
@@ -67,8 +74,6 @@ resource "google_storage_bucket_iam_member" "dataproc-member" {
   role   = "roles/storage.admin"
   member = "serviceAccount:${google_service_account.dataproc-svc.email}"
 }
-
-
 
 
 resource "google_project_service" "enable_dataproc_google_apis" {
@@ -92,25 +97,25 @@ resource "google_dataproc_cluster" "mycluster" {
       enable_http_port_access = true
     }
 
-    #We are creating a single node cluster, so, no need for workers for now
+    
     master_config {
       num_instances = 1
       machine_type  = var.dataproc_master_machine_type
       disk_config {
-        boot_disk_type    = "pd-standard"
+        boot_disk_type    = "pd-ssd"
         boot_disk_size_gb = var.dataproc_master_bootdisk
       }
     }
 
-    # worker_config {
-    #   num_instances = var.dataproc_workers_count
-    #   machine_type  = var.dataproc_worker_machine_type
-    #   disk_config {
-    #     boot_disk_type    = "pd-standard"
-    #     boot_disk_size_gb = var.dataproc_worker_bootdisk
-    #     num_local_ssds    = var.worker_local_ssd
-    #   }
-    # }
+    worker_config {
+      num_instances = var.dataproc_workers_count
+      machine_type  = var.dataproc_worker_machine_type
+      disk_config {
+        boot_disk_type    = "pd-ssd"
+        boot_disk_size_gb = var.dataproc_worker_bootdisk
+        num_local_ssds    = var.worker_local_ssd
+      }
+    }
 
     # preemptible_worker_config {
     #   num_instances = var.preemptible_worker
@@ -121,8 +126,7 @@ resource "google_dataproc_cluster" "mycluster" {
       optional_components = ["JUPYTER"]
       override_properties = {
         # create a single node cluster to reduce costs
-        "dataproc:dataproc.allow.zero.workers" = true
-        # "dataproc:dataproc.jupyter.listen.all.interfaces" = true
+        # "dataproc:dataproc.allow.zero.workers" = true
         "dataproc:dataproc.jupyter.notebook.gcs.dir" = google_storage_bucket.dataproc-bucket.name
       }
     }

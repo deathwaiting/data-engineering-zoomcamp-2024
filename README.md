@@ -1,13 +1,35 @@
 ## Problem
-As a part 
+As a part of Helinski city effort to encourage the usage of sustainable transportation methods, and to reduce the dependency on cars, the city is trying to promote the usage of bike share solutions for last mile trips.
+To monitor the adoption and the sucess of such solutions in Helinsky, the bearu of transportation needs a dashboard that summarizes the trends of using bike share solutions, based on trips data for years 2016-2020, before covid lockdown.
+
+In order to have a better understanding of the solution adoption, the following is required:
+- A graph showing the total trips year-to-year
+- A map showing the popularity of each station: how much trips were made from each station.
+
+
+## Results
+
+![Dashboard](./imgs/report-screen-shot.png)
+
+- The pipe line takes the raw data from as CSV in a tar.gz file
+- Then using spark, it reads the data and cleans from invalid rows.
+- Then it saves the cleaned data as parquet files to GCS, partitioned by year.
+- Similarly, it will save the data into big-query table
+    - The table is partitioned by year to reduce per-year query costs
+    - And the clustering is done on departure_id, to facilate the map dashboard, which count trips by departure station.
+- Data looker is used to create the dashboard as shown in the image
+- You can view the dashboard from [here](https://lookerstudio.google.com/s/qkT3YTDP1qg)
+    - unfortunately I couldn't find an easy way to automate the dashboard replication
 
 ## Requirements
+- Google cloud account
 - gcloud cli
 - terraform
 
 ## Steps
 
-- Download the Helsinki City bikes data set from [kaggle](https://www.kaggle.com/datasets/geometrein/helsinki-city-bikes?resource=download)
+- The Helsinki City bikes data set from [kaggle](https://www.kaggle.com/datasets/geometrein/helsinki-city-bikes?resource=download) is available on this [url](https://storage.googleapis.com/pfcllotsb7jsqqvbjrnw3s-datasets/bike-rides-data.tar.gz) 
+
 
 - in Google-Cloud-Services console, create a new project.
 
@@ -42,7 +64,7 @@ terraform plan"
 terraform apply"
 ```
 
-- upload the dataset to bucket
+- run the notebook using dataproc
 ```shell
 gcloud storage cp <data-set-zip-file-path> gs://zoomcamp_project_pfcllotsb7jsqqvbjrnw3s/zoomcamp-dataset
 ```
