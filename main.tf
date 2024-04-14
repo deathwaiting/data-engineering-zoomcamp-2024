@@ -14,7 +14,7 @@ provider "google" {
 
 
 resource "google_storage_bucket" "demo-bucket" {
-  name          = "${var.gcs_bucket_name}"
+  name          = "${var.project}-datalake"
   location      = var.location
   force_destroy = true
 
@@ -34,6 +34,7 @@ resource "google_storage_bucket" "demo-bucket" {
 resource "google_bigquery_dataset" "demo-dataset" {
   dataset_id = "${var.bq_dataset_name}"
   location   = var.location
+  delete_contents_on_destroy = true
 }
 
 ###############################################################
@@ -61,9 +62,16 @@ resource "google_project_iam_member" "svc-access-bigquery" {
   member = "serviceAccount:${google_service_account.dataproc-svc.email}"
 }
 
+resource "google_project_iam_member" "svc-admin-bigquery" {
+  project = var.project
+  role    = "roles/bigquery.admin"
+  member = "serviceAccount:${google_service_account.dataproc-svc.email}"
+}
+
+
 resource "google_storage_bucket" "dataproc-bucket" {
   project                     = var.project
-  name                        = "${var.prefix}-dataproc-config"
+  name                        = "${var.project}-dataproc-config"
   uniform_bucket_level_access = true
   location                    = var.region
   force_destroy               = true
@@ -84,7 +92,7 @@ resource "google_project_service" "enable_dataproc_google_apis" {
 
 
 resource "google_dataproc_cluster" "mycluster" {
-  name                          = "${var.prefix}-dataproc"
+  name                          = "${var.project}-dataproc"
   region                        = var.region
   depends_on = [ google_project_service.enable_dataproc_google_apis ]
 
@@ -117,9 +125,9 @@ resource "google_dataproc_cluster" "mycluster" {
       }
     }
 
-    # preemptible_worker_config {
-    #   num_instances = var.preemptible_worker
-    # }
+    preemptible_worker_config {
+      num_instances = var.preemptible_worker
+    }
 
     software_config {
       image_version = "2.0.66-debian10"

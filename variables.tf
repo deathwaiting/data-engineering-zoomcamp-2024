@@ -2,10 +2,6 @@ variable "project" {
   description = "Project"
 }
 
-variable "prefix" {
-  description = "random prefix string"
-  default =  "pfcllotsb7jsqqvbjrnw3s"
-}
 
 variable "region" {
   description = "Region"
@@ -77,5 +73,5 @@ variable "worker_local_ssd" {
 variable "preemptible_worker" {
   type        = number
   description = "number of preemptible nodes to create"
-  default     = 1
+  default     = 2
 }
